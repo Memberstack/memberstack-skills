@@ -165,6 +165,7 @@ Categories: `help center`, `blog post`, `component`, `template`, `memberscript`
 ## Reference Files
 
 For detailed documentation, see:
-- `references/mcp-tools.md` - Complete tool reference with schemas
+- `references/mcp-tools.md` - Complete MCP tool reference with schemas
+- `references/dom-package.md` - Frontend JavaScript SDK methods
 - `references/webflow-attributes.md` - All data-ms-* attributes
 - `references/workflows.md` - Multi-step workflow patterns
