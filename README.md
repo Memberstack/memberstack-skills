@@ -14,35 +14,36 @@ After adding the MCP, restart Claude Code and authenticate when prompted.
 
 ## Installation
 
-### Claude Code (via Marketplace)
+### Option 1: From GitHub (Recommended)
 
 ```bash
-# Add the marketplace
+# Add the Memberstack marketplace
 claude plugin marketplace add memberstack/memberstack-skills
 
 # Install the plugin
 claude plugin install memberstack-skills@memberstack-skills
 ```
 
-### Claude Code (from local clone)
+### Option 2: From Local Clone
 
 ```bash
 # Clone the repository
-git clone git@github.com:memberstack/memberstack-skills.git ~/memberstack-skills
+git clone https://github.com/memberstack/memberstack-skills.git ~/memberstack-skills
 
-# Install the plugin directly
-claude plugin install ~/memberstack-skills
+# Add as local marketplace
+claude plugin marketplace add ~/memberstack-skills
+
+# Install the plugin
+claude plugin install memberstack-skills@memberstack-skills
 ```
 
-After installation, restart Claude Code. The skills will be automatically invoked when relevant to your task.
+After installation, restart Claude Code. The skill will be automatically invoked when relevant to your task.
 
 ## Updating
 
 ```bash
-# Update the marketplace index
-claude plugin marketplace update
-
-# Update the plugin
+# Update marketplace index and plugin
+claude plugin marketplace update memberstack-skills
 claude plugin update memberstack-skills@memberstack-skills
 ```
 
