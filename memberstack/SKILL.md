@@ -1,10 +1,33 @@
 ---
 name: memberstack
 description: >
-  Memberstack membership management via MCP. Use when: (1) Managing member accounts, authentication, or plan assignments, (2) Creating/configuring subscription plans and pricing, (3) Setting up gated content and URL protection, (4) Working with data tables for custom storage, (5) Handling team management, (6) Integrating with Webflow using data attributes, (7) Any membership site operations. This skill requires the Memberstack MCP to be installed.
+  Memberstack membership management via MCP. Use when: (1) Managing member accounts, authentication, or plan assignments, (2) Creating/configuring subscription plans and pricing, (3) Setting up gated content and URL protection, (4) Working with data tables for custom storage, (5) Handling team management, (6) Integrating with Webflow or React/JS frameworks, (7) Any membership site operations. This skill requires the Memberstack MCP to be installed.
 ---
 
 # Memberstack
+
+## Stack Detection (IMPORTANT)
+
+**Before giving frontend code examples, determine the user's stack.** Different stacks require different approaches:
+
+| Stack | Frontend Approach | Reference File |
+|-------|-------------------|----------------|
+| **Webflow** | `data-ms-*` attributes (no-code) | `webflow-attributes.md` |
+| **React / Next.js / Vue / Svelte** | DOM package (`@memberstack/dom`) | `dom-package.md` |
+| **Vanilla JS / HTML** | DOM package or data attributes | Either |
+| **Node.js / Server-side** | Admin SDK (backend only) | Use `memberstackKnowledgeSearch` |
+
+### Detection Methods
+1. Check for framework files (`package.json`, `next.config.js`, `.webflow` files)
+2. Look at existing code patterns in the project
+3. **Ask the user if unclear**: "Are you using Webflow, React, or another framework?"
+
+### Critical Rules
+- **Never recommend `data-ms-*` attributes for React/Next.js/Vue** — they won't work
+- **Never recommend `npm install @memberstack/dom` for Webflow** — use `window.$memberstackDom`
+- **Webflow uses attributes on HTML elements**; JS frameworks use the DOM package API
+- If you see JSX/TSX files → use DOM package
+- If you see Webflow Designer or `.webflow` exports → use data attributes
 
 ## MCP Installation
 
@@ -164,8 +187,11 @@ Categories: `help center`, `blog post`, `component`, `template`, `memberscript`
 
 ## Reference Files
 
-For detailed documentation, see:
-- `references/mcp-tools.md` - Complete MCP tool reference with schemas
-- `references/dom-package.md` - Frontend JavaScript SDK methods
-- `references/webflow-attributes.md` - All data-ms-* attributes
-- `references/workflows.md` - Multi-step workflow patterns
+| File | Use For | Stack |
+|------|---------|-------|
+| `references/mcp-tools.md` | Backend member/plan management | All (MCP) |
+| `references/dom-package.md` | Frontend auth, billing, member data | React, Next.js, Vue, Vanilla JS |
+| `references/webflow-attributes.md` | No-code forms, modals, gating | Webflow only |
+| `references/workflows.md` | Multi-step patterns | All |
+
+**Choose the right reference based on the user's stack** (see Stack Detection above).
