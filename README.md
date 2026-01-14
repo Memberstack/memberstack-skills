@@ -51,10 +51,22 @@ claude plugin update memberstack-skills@memberstack-skills
 
 This skill provides Claude with:
 
-- **MCP Tool Guidance**: How to use all 62+ Memberstack MCP tools across 7 categories (members, plans, data tables, gated content, teams, custom fields, Stripe)
-- **Webflow Integration**: Complete `data-ms-*` attribute reference for forms, modals, content gating, and personalization
-- **Workflow Patterns**: Common multi-step patterns for membership site operations
-- **Knowledge Search**: Access to Memberstack's documentation for DOM package, webhooks, and integrations
+- **MCP Tool Guidance**: All 62+ Memberstack MCP tools across 7 categories
+- **DOM Package Reference**: Frontend SDK for React, Next.js, Vue, and vanilla JS
+- **Webflow Attributes**: Complete `data-ms-*` reference for no-code integration
+- **Workflow Patterns**: Common multi-step patterns for membership operations
+- **Stack-Aware Guidance**: Automatically recommends the right approach for your framework
+
+## Stack Support
+
+The skill detects your tech stack and provides the appropriate guidance:
+
+| Stack | Approach |
+|-------|----------|
+| **Webflow** | `data-ms-*` HTML attributes (no-code) |
+| **React / Next.js / Vue / Svelte** | DOM package (`@memberstack/dom`) |
+| **Vanilla JS** | DOM package or data attributes |
+| **Node.js / Server** | Admin SDK |
 
 ## Features
 
@@ -72,13 +84,22 @@ This skill provides Claude with:
 
 Once installed, simply ask Claude to help with Memberstack tasks:
 
+**Backend (MCP)**
 - "Create a new membership plan with monthly and yearly pricing"
-- "Set up gated content for premium members"
-- "Show me the Webflow attributes for a signup form"
 - "Import members from a CSV"
-- "Configure a data table for user profiles"
+- "Set up gated content for premium members"
 
-Claude will automatically use the Memberstack skill and MCP tools to help you.
+**Frontend (React/Next.js)**
+- "Add a login form to my React app"
+- "How do I check if a user is logged in?"
+- "Implement Stripe checkout for subscriptions"
+
+**Frontend (Webflow)**
+- "Show me the data attributes for a signup form"
+- "How do I gate content for paid members?"
+- "Add a logout button"
+
+Claude will detect your stack and provide the appropriate code examples.
 
 ## Contributing
 
