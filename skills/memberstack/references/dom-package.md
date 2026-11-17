@@ -128,19 +128,19 @@ await memberstack.loginMemberEmailPassword({
 });
 ```
 
-### Passwordless (Magic Link)
-Two-step process.
+### Passwordless (6 digit code)
+Two-step process. Memberstack emails the member a 6 digit code, and your form sends it back. There is no magic link.
 
 ```js
-// Step 1: Send email
+// Step 1: Email the code
 await memberstack.sendMemberSignupPasswordlessEmail({
   email: "user@example.com"
 });
 
-// Step 2: Verify token from email
+// Step 2: Finish with the code the member typed in
 await memberstack.signupMemberPasswordless({
   email: "user@example.com",
-  passwordlessToken: "TOKEN_FROM_EMAIL",
+  passwordlessToken: "123456",
   plans: [{ planId: "pln_xxx" }]
 });
 ```
@@ -309,10 +309,12 @@ Store complex nested data (up to 1MB per member).
 
 ### getMemberJSON()
 
+Returns `{ data }`, where `data` is the stored object, or `null` if nothing is stored yet.
+
 ```js
-const json = await memberstack.getMemberJSON();
-console.log(json.preferences);
-console.log(json.history);
+const { data: json } = await memberstack.getMemberJSON();
+console.log(json?.preferences);
+console.log(json?.history);
 ```
 
 ### updateMemberJSON()
@@ -320,7 +322,8 @@ Always fetch first to preserve existing data.
 
 ```js
 // Read-modify-write pattern
-let json = await memberstack.getMemberJSON();
+const { data } = await memberstack.getMemberJSON();
+const json = data ?? {};
 
 // Add/update properties
 json.avatarURL = "https://example.com/avatar.jpg";
@@ -338,19 +341,19 @@ await memberstack.updateMemberJSON({ json });
 ## Events
 
 ### onAuthChange()
-Subscribe to authentication state changes.
+Subscribe to authentication state changes. The callback receives the member, or `null` when logged out. It is not called when you subscribe, so read the starting state with `getCurrentMember()`.
 
 ```js
-const listener = memberstack.onAuthChange((data) => {
-  if (data.member) {
-    console.log("Logged in:", data.member.id);
+const { unsubscribe } = memberstack.onAuthChange((member) => {
+  if (member) {
+    console.log("Logged in:", member.id);
   } else {
     console.log("Logged out");
   }
 });
 
-// Unsubscribe
-listener.unsubscribe();
+// Stop listening (always do this when a component unmounts)
+unsubscribe();
 ```
 
 ---
@@ -398,11 +401,31 @@ if (member) {
 
 ### Protect a page
 
+Redirecting in the browser keeps logged-out visitors away from a page, but it is not security: the page's code and data were already sent to the browser.
+
 ```js
 const { data: member } = await memberstack.getCurrentMember();
 if (!member) {
   window.location.href = "/login";
 }
+```
+
+For data that must stay private, check the member on your server before sending it. Send the member's token with the request and verify it with `@memberstack/admin`. Always pass your app ID as `audience`. Without it, a valid token from a different Memberstack app also passes.
+
+```js
+// Browser: send the token
+const token = memberstack.getMemberCookie();
+await fetch("/api/private", { headers: { Authorization: `Bearer ${token}` } });
+```
+
+```js
+// Server (Node.js): verify it
+import memberstackAdmin from "@memberstack/admin";
+const memberstack = memberstackAdmin.init(process.env.MEMBERSTACK_SECRET_KEY);
+
+const token = request.headers.authorization?.replace("Bearer ", "");
+const verified = await memberstack.verifyToken({ token, audience: process.env.MEMBERSTACK_APP_ID });
+// verified.id is the member ID. verifyToken throws when the token is not valid.
 ```
 
 ### Get member's plans
