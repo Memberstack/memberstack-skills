@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "memberstack": {
+      "type": "http",
+      "url": "https://mcp.memberstack.com/mcp"
+    }
+  }
+}

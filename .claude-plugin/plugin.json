@@ -1,0 +1,27 @@
+{
+  "name": "memberstack",
+  "description": "Add paid memberships, logins and gated content to a site with Memberstack. Bundles the Memberstack MCP server (members, plans, prices, gated content, data tables, teams) and the skill that teaches agents how to use it.",
+  "author": {
+    "name": "Memberstack",
+    "email": "support@memberstack.com",
+    "url": "https://www.memberstack.com"
+  },
+  "homepage": "https://developers.memberstack.com/mcp-server",
+  "repository": "https://github.com/Memberstack/memberstack-skills",
+  "license": "MIT",
+  "keywords": [
+    "memberstack",
+    "memberships",
+    "paid-memberships",
+    "gated-content",
+    "paywall",
+    "auth",
+    "login",
+    "subscriptions",
+    "stripe",
+    "webflow",
+    "mcp"
+  ],
+  "privacyPolicyUrl": "https://www.memberstack.com/legal/privacy-policy",
+  "termsOfServiceUrl": "https://www.memberstack.com/legal/terms-of-service"
+}
