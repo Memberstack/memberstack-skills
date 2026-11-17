@@ -39,6 +39,21 @@ const TOOL_LIKE = /^(get|list|current|switch|create|update|delete|remove|detach|
 // Words that match the pattern above but are not MCP tools (browser package methods and so on).
 const NOT_TOOLS = new Set(['getCurrentMember', 'getMemberCookie']);
 
+// The server may answer with plain JSON or with a stream of server-sent events. A stream can
+// carry notifications before the reply, so each event is parsed on its own and the one that
+// answers this request (same id) is returned.
+function parseReply(text, id) {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith('{')) return JSON.parse(trimmed);
+  const messages = trimmed
+    .split(/\r?\n\r?\n/)
+    .map((event) => event.split(/\r?\n/).filter((line) => line.startsWith('data:')).map((line) => line.slice(5).trimStart()).join('\n'))
+    .filter(Boolean)
+    .map((data) => JSON.parse(data));
+  return messages.find((message) => message.id === id) ?? null;
+}
+
 async function rpc(body, sessionId) {
   const headers = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' };
   if (sessionId) headers['Mcp-Session-Id'] = sessionId;
@@ -56,16 +71,8 @@ async function rpc(body, sessionId) {
     await new Promise((resolve) => setTimeout(resolve, attempt * 6000));
   }
   if (!res.ok) throw new Error(`${body.method} failed: HTTP ${res.status}`);
-  const text = await res.text();
-  let json = null;
-  if (text.trim()) {
-    // The server may answer with plain JSON or with one server-sent event.
-    const data = text.trim().startsWith('{')
-      ? text
-      : text.split('\n').filter((line) => line.startsWith('data:')).map((line) => line.slice(5)).join('');
-    json = JSON.parse(data);
-    if (json.error) throw new Error(`${body.method} failed: ${json.error.message}`);
-  }
+  const json = parseReply(await res.text(), body.id);
+  if (json?.error) throw new Error(`${body.method} failed: ${json.error.message}`);
   return { json, sessionId: res.headers.get('mcp-session-id') ?? sessionId };
 }
 

@@ -423,8 +423,12 @@ await fetch("/api/private", { headers: { Authorization: `Bearer ${token}` } });
 import memberstackAdmin from "@memberstack/admin";
 const memberstack = memberstackAdmin.init(process.env.MEMBERSTACK_SECRET_KEY);
 
+// Stop at startup if the app ID is missing: an undefined audience skips the check.
+const appId = process.env.MEMBERSTACK_APP_ID;
+if (!appId) throw new Error("MEMBERSTACK_APP_ID is not set");
+
 const token = request.headers.authorization?.replace("Bearer ", "");
-const verified = await memberstack.verifyToken({ token, audience: process.env.MEMBERSTACK_APP_ID });
+const verified = await memberstack.verifyToken({ token, audience: appId });
 // verified.id is the member ID. verifyToken throws when the token is not valid.
 ```
 
