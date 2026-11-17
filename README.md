@@ -82,11 +82,17 @@ Earlier versions of this README had you add the server by hand with `npx mcp-rem
    claude mcp remove memberstack
    ```
 
-2. Update the plugin. It was renamed from `memberstack-skills` to `memberstack`, and Claude Code moves your install over for you:
+2. Update the marketplace, then install the plugin under its new name. It was renamed from `memberstack-skills` to `memberstack`:
 
    ```bash
    claude plugin marketplace update memberstack-skills
    ```
+
+   ```bash
+   claude plugin install memberstack@memberstack-skills
+   ```
+
+   The old `memberstack-skills` plugin entry is replaced. You do not need to uninstall it.
 
 To get future updates without doing anything, turn on auto-update: `/plugin`, then Marketplaces, then `memberstack-skills`, then Enable auto-update.
 
