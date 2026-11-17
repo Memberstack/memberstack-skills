@@ -42,7 +42,19 @@ const NOT_TOOLS = new Set(['getCurrentMember', 'getMemberCookie']);
 async function rpc(body, sessionId) {
   const headers = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' };
   if (sessionId) headers['Mcp-Session-Id'] = sessionId;
-  const res = await fetch(SERVER_URL, { method: 'POST', headers, body: JSON.stringify(body) });
+  // The server is briefly unavailable when it restarts, so a 5xx or a dropped connection is
+  // retried for up to about a minute before the check fails.
+  let res;
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      res = await fetch(SERVER_URL, { method: 'POST', headers, body: JSON.stringify(body) });
+      if (res.status < 500) break;
+      if (attempt === 5) break;
+    } catch (error) {
+      if (attempt === 5) throw new Error(`${body.method} failed: ${error.message}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, attempt * 6000));
+  }
   if (!res.ok) throw new Error(`${body.method} failed: HTTP ${res.status}`);
   const text = await res.text();
   let json = null;
