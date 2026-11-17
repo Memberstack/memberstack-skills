@@ -21,7 +21,8 @@ Call the Memberstack MCP server's `currentApp` tool.
 - **There are no Memberstack tools at all:** the server is not connected. If this skill came from the Memberstack plugin, the user has to sign in (in Claude Code: run `/mcp`, pick `memberstack`, sign in). Otherwise give them the command for their agent and stop until it is connected:
 
 ```bash
-# Claude Code: add the server, then sign in (or type /mcp in Claude Code and pick memberstack)
+# Claude Code: run in the project folder (or add --scope user for all projects), then sign in.
+# Instead of the login command you can type /mcp in Claude Code and pick memberstack.
 claude mcp add --transport http memberstack https://mcp.memberstack.com/mcp
 claude mcp login memberstack
 

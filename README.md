@@ -71,6 +71,12 @@ npx skills add Memberstack/memberstack-skills
 
 This installs the skill without the MCP server. Add the server by hand with the URL `https://mcp.memberstack.com/mcp` (streamable HTTP). Your agent's docs say where.
 
+In Claude Code, for example, run this in your project folder (or add `--scope user` to use it in all projects), then type `/mcp` to sign in:
+
+```bash
+claude mcp add --transport http memberstack https://mcp.memberstack.com/mcp
+```
+
 ## Signing in
 
 The server uses your Memberstack login (OAuth) in the browser. There is no API key to paste. The agent can then read and change every app your account can open, so connect only from a machine you trust.
