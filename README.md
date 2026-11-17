@@ -15,7 +15,7 @@ It works with Claude Code, Codex and Cursor. Other agents can install the skill 
 claude plugin install memberstack --marketplace Memberstack/memberstack-skills
 ```
 
-Then start Claude Code, run `/mcp`, pick `memberstack` and sign in with your Memberstack account.
+Then start Claude Code, run `/mcp`, pick the Memberstack server and sign in with your Memberstack account.
 
 On older versions of Claude Code, run these two instead:
 
@@ -37,7 +37,11 @@ codex plugin marketplace add Memberstack/memberstack-skills
 codex plugin add memberstack@memberstack
 ```
 
-Sign in when Codex asks, or run `codex mcp login memberstack`.
+Then sign in:
+
+```bash
+codex mcp login memberstack
+```
 
 ### Cursor
 
@@ -47,14 +51,13 @@ Add the server to `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "memberstack": {
-      "type": "streamable-http",
       "url": "https://mcp.memberstack.com/mcp"
     }
   }
 }
 ```
 
-Then add the skill:
+Sign in when Cursor asks. Then add the skill:
 
 ```bash
 npx skills add Memberstack/memberstack-skills -a cursor

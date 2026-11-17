@@ -21,26 +21,27 @@ Call the Memberstack MCP server's `currentApp` tool.
 - **There are no Memberstack tools at all:** the server is not connected. If this skill came from the Memberstack plugin, the user has to sign in (in Claude Code: run `/mcp`, pick `memberstack`, sign in). Otherwise give them the command for their agent and stop until it is connected:
 
 ```bash
-# Claude Code
+# Claude Code: add the server, then sign in (or type /mcp in Claude Code and pick memberstack)
 claude mcp add --transport http memberstack https://mcp.memberstack.com/mcp
+claude mcp login memberstack
 
-# Codex
+# Codex: add the server, then sign in
 codex mcp add memberstack --url https://mcp.memberstack.com/mcp
+codex mcp login memberstack
 ```
 
 ```json
-// Cursor: ~/.cursor/mcp.json
+// Cursor: ~/.cursor/mcp.json, then sign in when Cursor asks
 {
   "mcpServers": {
     "memberstack": {
-      "type": "streamable-http",
       "url": "https://mcp.memberstack.com/mcp"
     }
   }
 }
 ```
 
-Sign-in happens in the browser with the user's Memberstack account. There is no API key to paste, and the server never needs a secret key.
+Adding the server does not sign the user in. Sign-in happens in the browser with the user's Memberstack account. There is no API key to paste, and the server never needs a secret key.
 
 Only call `createApp` when the user asks for a new app. Normally they work in one that exists.
 
