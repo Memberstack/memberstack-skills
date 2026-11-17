@@ -1,138 +1,142 @@
-# Memberstack Skills for Claude Code
+# Memberstack plugin for coding agents
 
-A Claude Code skill that transforms Claude into a Memberstack expert, enabling seamless membership site management through the Memberstack MCP.
+One install gives your coding agent two things:
 
-## Prerequisites
+- **The Memberstack MCP server**, so the agent can manage your Memberstack app: members, plans, prices, gated content, data tables, teams and custom fields.
+- **The Memberstack skill**, so the agent knows how to add logins, paid plans and gated content to your site, and how to use the server safely.
 
-Before installing the skill, you need to install the Memberstack MCP:
+It works with Claude Code, Codex and Cursor. Other agents can install the skill on its own.
 
-```bash
-claude mcp add memberstack --scope user npx mcp-remote https://mcp.memberstack.com/mcp
-```
+## Install
 
-After adding the MCP, restart Claude Code and authenticate when prompted.
-
-## Installation
-
-### Option 1: From GitHub (Recommended)
+### Claude Code
 
 ```bash
-# Add the Memberstack marketplace
-claude plugin marketplace add memberstack/memberstack-skills
-
-# Install the plugin
-claude plugin install memberstack-skills@memberstack-skills
+claude plugin install memberstack --marketplace Memberstack/memberstack-skills
 ```
 
-### Option 2: From Local Clone
+Then start Claude Code, run `/mcp`, pick `memberstack` and sign in with your Memberstack account.
+
+On older versions of Claude Code, run these two instead:
 
 ```bash
-# Clone the repository
-git clone https://github.com/memberstack/memberstack-skills.git ~/memberstack-skills
-
-# Add as local marketplace
-claude plugin marketplace add ~/memberstack-skills
-
-# Install the plugin
-claude plugin install memberstack-skills@memberstack-skills
+claude plugin marketplace add Memberstack/memberstack-skills
 ```
-
-After installation, restart Claude Code. The skill will be automatically invoked when relevant to your task.
-
-## Updating
 
 ```bash
-# Update marketplace index and plugin
-claude plugin marketplace update memberstack-skills
-claude plugin update memberstack-skills@memberstack-skills
+claude plugin install memberstack@memberstack-skills
 ```
 
-## What's Included
+### Codex
 
-This skill provides Claude with:
+```bash
+codex plugin marketplace add Memberstack/memberstack-skills
+```
 
-- **MCP Tool Guidance**: All 62+ Memberstack MCP tools across 7 categories
-- **DOM Package Reference**: Frontend SDK for React, Next.js, Vue, and vanilla JS
-- **Webflow Attributes**: Complete `data-ms-*` reference for no-code integration
-- **Workflow Patterns**: Common multi-step patterns for membership operations
-- **Stack-Aware Guidance**: Automatically recommends the right approach for your framework
+```bash
+codex plugin add memberstack@memberstack
+```
 
-## Stack Support
+Sign in when Codex asks, or run `codex mcp login memberstack`.
 
-The skill detects your tech stack and provides the appropriate guidance:
+### Cursor
 
-| Stack | Approach |
-|-------|----------|
-| **Webflow** | `data-ms-*` HTML attributes (no-code) |
-| **React / Next.js / Vue / Svelte** | DOM package (`@memberstack/dom`) |
-| **Vanilla JS** | DOM package or data attributes |
-| **Node.js / Server** | Admin SDK |
+Add the server to `~/.cursor/mcp.json`:
 
-## Features
+```json
+{
+  "mcpServers": {
+    "memberstack": {
+      "type": "streamable-http",
+      "url": "https://mcp.memberstack.com/mcp"
+    }
+  }
+}
+```
 
-| Category | Tools | Operations |
-|----------|-------|------------|
-| Members | 15 | CRUD, plan assignments, import/export |
-| Plans | 9 | Create/manage subscriptions, prices |
-| Data Tables | 14 | Custom database operations |
-| Gated Content | 15 | URL protection, content groups |
-| Teams | 4 | Team management, invites |
-| Custom Fields | 4 | Member profile fields |
-| Stripe | 1 | Payment integration |
+Then add the skill:
 
-## Usage
+```bash
+npx skills add Memberstack/memberstack-skills -a cursor
+```
 
-Once installed, simply ask Claude to help with Memberstack tasks:
+### Any other agent (skill only)
 
-**Backend (MCP)**
-- "Create a new membership plan with monthly and yearly pricing"
-- "Import members from a CSV"
-- "Set up gated content for premium members"
+```bash
+npx skills add Memberstack/memberstack-skills
+```
 
-**Frontend (React/Next.js)**
-- "Add a login form to my React app"
-- "How do I check if a user is logged in?"
-- "Implement Stripe checkout for subscriptions"
+This installs the skill without the MCP server. Add the server by hand with the URL `https://mcp.memberstack.com/mcp` (streamable HTTP). Your agent's docs say where.
 
-**Frontend (Webflow)**
-- "Show me the data attributes for a signup form"
-- "How do I gate content for paid members?"
-- "Add a logout button"
+## Signing in
 
-Claude will detect your stack and provide the appropriate code examples.
+The server uses your Memberstack login (OAuth) in the browser. There is no API key to paste. The agent can then read and change every app your account can open, so connect only from a machine you trust.
 
-## Contributing
+## Upgrading from the old version
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Earlier versions of this README had you add the server by hand with `npx mcp-remote`. If you did that:
+
+1. Remove the old server, or you will see every tool twice:
+
+   ```bash
+   claude mcp remove memberstack
+   ```
+
+2. Update the plugin. It was renamed from `memberstack-skills` to `memberstack`, and Claude Code moves your install over for you:
+
+   ```bash
+   claude plugin marketplace update memberstack-skills
+   ```
+
+To get future updates without doing anything, turn on auto-update: `/plugin`, then Marketplaces, then `memberstack-skills`, then Enable auto-update.
+
+## What the skill covers
+
+| Site | Approach |
+|---|---|
+| Webflow | `data-ms-*` attributes, no code |
+| React, Next.js, Vue, Svelte, other JavaScript apps | `@memberstack/dom` |
+| Plain HTML | The Memberstack script tag with `data-ms-*` attributes |
+| Server code (Node.js) | `@memberstack/admin` |
+
+The full list of MCP tools is in [skills/memberstack/references/tools.md](skills/memberstack/references/tools.md). It is generated from the server, so it is always the real list.
+
+## Things to ask for
+
+- "Add paid memberships to my Next.js app with Memberstack"
+- "Create a Pro plan with monthly and yearly prices"
+- "Gate everything under /members for paying members"
+- "Add a login and signup form to my React app"
+- "Show me the Webflow attributes for a signup form"
+- "Why did this member not get their verification email?"
+
+## Safety
+
+- Deleting or removing anything asks you first. So do a few risky changes, such as giving a real member a plan.
+- Test mode only covers members, teams and data table records. Plans, prices and gated content always change your live setup.
 
 ## Troubleshooting
 
-### MCP Authentication Issues
+**The agent has no Memberstack tools.** The server is not connected or you are not signed in. In Claude Code run `/mcp` and check `memberstack`.
 
-If you encounter authentication problems, clear the cached tokens:
+**Sign-in fails or you want to sign out.** In Claude Code run `/mcp`, pick `memberstack`, and clear the sign-in. Then sign in again.
 
-```bash
-rm -rf ~/.mcp-auth
-```
-
-Then restart Claude Code and re-authenticate.
-
-### Skill Not Triggering
-
-Ensure the skill is installed correctly:
+**The skill does not load.** Check the plugin is installed:
 
 ```bash
 claude plugin list
 ```
 
-You should see `memberstack-skills` in the list.
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT. See [LICENSE](LICENSE).
 
-## Resources
+## Links
 
-- [Memberstack Documentation](https://docs.memberstack.com)
-- [Memberstack Developers](https://developers.memberstack.com)
-- [Claude Code Documentation](https://docs.anthropic.com/claude-code)
+- [MCP server docs](https://developers.memberstack.com/mcp-server)
+- [Developer docs](https://developers.memberstack.com)
+- [Help center](https://docs.memberstack.com)
