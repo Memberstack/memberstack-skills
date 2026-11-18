@@ -3,7 +3,7 @@
 One install gives your coding agent two things:
 
 - **The Memberstack MCP server**, so the agent can manage your Memberstack app: members, plans, prices, gated content, data tables, teams and custom fields.
-- **The Memberstack skill**, so the agent knows how to add logins, paid plans and gated content to your site, and how to use the server safely.
+- **The Memberstack skills**, so the agent knows how to add logins, paid plans and gated content to your site, and how to use the server safely.
 
 It works with Claude Code, Codex and Cursor. Other agents can install the skill on its own.
 
@@ -57,19 +57,19 @@ Add the server to `~/.cursor/mcp.json`:
 }
 ```
 
-Sign in when Cursor asks. Then add the skill:
+Sign in when Cursor asks. Then add the skills:
 
 ```bash
 npx skills add Memberstack/memberstack-skills -a cursor
 ```
 
-### Any other agent (skill only)
+### Any other agent (skills only)
 
 ```bash
 npx skills add Memberstack/memberstack-skills
 ```
 
-This installs the skill without the MCP server. Add the server by hand with the URL `https://mcp.memberstack.com/mcp` (streamable HTTP). Your agent's docs say where.
+This installs the skills without the MCP server. Add the server by hand with the URL `https://mcp.memberstack.com/mcp` (streamable HTTP). Your agent's docs say where.
 
 In Claude Code, for example, run this in your project folder (or add `--scope user` to use it in all projects), then type `/mcp` to sign in:
 
@@ -105,16 +105,20 @@ Earlier versions of this README had you add the server by hand with `npx mcp-rem
 
 To get future updates without doing anything, turn on auto-update: `/plugin`, then Marketplaces, then `memberstack-skills`, then Enable auto-update.
 
-## What the skill covers
+## What is in it
 
-| Site | Approach |
+Six skills. Your agent loads the one that matches what you ask for.
+
+| Skill | Use it to |
 |---|---|
-| Webflow | `data-ms-*` attributes, no code |
-| React, Next.js, Vue, Svelte, other JavaScript apps | `@memberstack/dom` |
-| Plain HTML | The Memberstack script tag with `data-ms-*` attributes |
-| Server code (Node.js) | `@memberstack/admin` |
+| `memberstack` | Manage your app through the MCP server: members, plans, prices, gated content, data tables |
+| `memberstack-add-to-app` | Add signup, login and a member area to a React, Next.js, Vue or Svelte app |
+| `memberstack-paid-memberships` | Charge for access: plans, prices, Stripe checkout, the billing portal |
+| `memberstack-gate-content` | Lock pages or content to members or to a plan |
+| `memberstack-verify-on-server` | Check a member in an API route, so private data stays private |
+| `memberstack-webflow` | Do all of this on Webflow or plain HTML with `data-ms-*` attributes |
 
-The full list of MCP tools is in [skills/memberstack/references/tools.md](skills/memberstack/references/tools.md). It is generated from the server, so it is always the real list.
+Each skill ends with a short security checklist. The full list of MCP tools is in [skills/memberstack/references/tools.md](skills/memberstack/references/tools.md). It is generated from the server, so it is always the real list.
 
 ## Things to ask for
 

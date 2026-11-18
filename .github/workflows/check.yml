@@ -28,5 +28,8 @@ jobs:
           for file in .claude-plugin/plugin.json .claude-plugin/marketplace.json .mcp.json mcp.json plugin.json .cursor-plugin/plugin.json .codex-plugin/plugin.json .agents/plugins/marketplace.json; do
             node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" "$file"
           done
-      - name: SKILL.md stays under 500 lines
-        run: test "$(wc -l < skills/memberstack/SKILL.md)" -lt 500
+      - name: Every SKILL.md stays under 500 lines
+        run: |
+          for file in skills/*/SKILL.md; do
+            test "$(wc -l < "$file")" -lt 500 || { echo "$file is too long"; exit 1; }
+          done

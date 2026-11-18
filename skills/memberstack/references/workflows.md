@@ -101,7 +101,7 @@ Like `createPrice`, it needs a paid Memberstack subscription, a connected Stripe
 
 URLs are page paths only. No domain, no `https://`, no `*`: a value with any of those never matches and the page stays public. `STARTS` matches every path that begins with the text. `EQUALS` matches one exact path.
 
-Gated content is shared between LIVE and test mode. Hiding a page this way keeps people out in the browser. Anything that must stay private also needs a check on the server (see `SKILL.md`).
+Gated content is shared between LIVE and test mode. Hiding a page this way keeps people out in the browser. Anything that must stay private also needs a check on the server (see the `memberstack-verify-on-server` skill).
 
 ### Add a page to a group
 

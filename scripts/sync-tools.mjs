@@ -8,13 +8,14 @@
 // The server answers `tools/list` without a sign-in, so this needs no credentials.
 // Needs Node 18 or later (built-in fetch). No dependencies.
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SERVER_URL = process.env.MEMBERSTACK_MCP_URL ?? 'https://mcp.memberstack.com/mcp';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SKILL_DIR = join(ROOT, 'skills', 'memberstack');
+const SKILLS_DIR = join(ROOT, 'skills');
+const SKILL_DIR = join(SKILLS_DIR, 'memberstack');
 const TOOLS_FILE = join(SKILL_DIR, 'references', 'tools.md');
 
 // The server has no categories, so the grouping lives here. A tool the server adds must be
@@ -33,11 +34,21 @@ const GROUPS = [
 // Tool names that were removed from the server. They must never come back into the skill.
 const REMOVED_TOOLS = ['memberstackKnowledgeSearch', 'explore_tools', 'get_tool_schema'];
 
-// Files that talk about MCP tools. Words in backticks that look like a tool name are checked.
-const CHECKED_FILES = [join(SKILL_DIR, 'SKILL.md'), join(SKILL_DIR, 'references', 'workflows.md')];
+// Every markdown file in every skill is checked for removed tools and mcp__ prefixes.
+const allSkillFiles = (dir = SKILLS_DIR) =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) return allSkillFiles(path);
+    return name.endsWith('.md') && path !== TOOLS_FILE ? [path] : [];
+  });
+
+// Files that name MCP tools in backticks: each SKILL.md and the MCP workflows. Words there that
+// look like a tool name must be real tools. The package reference files are left out, because
+// they are full of @memberstack/dom methods that look the same.
+const namesMcpTools = (path) => path.endsWith('SKILL.md') || path === join(SKILL_DIR, 'references', 'workflows.md');
 const TOOL_LIKE = /^(get|list|current|switch|create|update|delete|remove|detach|link|add|import|export|generate|regenerate)[A-Z][A-Za-z]*$/;
-// Words that match the pattern above but are not MCP tools (browser package methods and so on).
-const NOT_TOOLS = new Set(['getCurrentMember', 'getMemberCookie']);
+// Words that match the pattern above but are @memberstack/dom methods, not MCP tools.
+const NOT_TOOLS = new Set(['getCurrentMember', 'getMemberCookie', 'getMemberJSON', 'updateMemberJSON']);
 
 // The server may answer with plain JSON or with a stream of server-sent events. A stream can
 // carry notifications before the reply, so each event is parsed on its own and the one that
@@ -149,13 +160,14 @@ function render(tools) {
 
 function checkSkillFiles(toolNames) {
   const problems = [];
-  for (const file of CHECKED_FILES) {
+  for (const file of allSkillFiles()) {
     const text = readFileSync(file, 'utf8');
     const short = file.slice(ROOT.length + 1);
     for (const removed of REMOVED_TOOLS) {
       if (text.includes(removed)) problems.push(`${short} mentions the removed tool ${removed}`);
     }
     if (text.includes('mcp__')) problems.push(`${short} uses an mcp__ prefix; name tools without it`);
+    if (!namesMcpTools(file)) continue;
     for (const match of text.matchAll(/`([A-Za-z_]+)(?:\([^`]*\))?`/g)) {
       const word = match[1];
       if (TOOL_LIKE.test(word) && !toolNames.has(word) && !NOT_TOOLS.has(word)) {

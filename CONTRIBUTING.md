@@ -19,13 +19,21 @@ Thanks for helping keep the Memberstack plugin accurate.
 .mcp.json              The MCP server, for Claude Code
 mcp.json, plugin.json  The same, in the Agent Plugins format
 scripts/sync-tools.mjs Rebuilds and checks the tool list
-skills/memberstack/
-├── SKILL.md                   The skill itself (keep it under 500 lines)
-└── references/
-    ├── tools.md               Every MCP tool (generated)
-    ├── workflows.md           Step-by-step MCP jobs
-    ├── dom-package.md         Site code with @memberstack/dom
-    └── webflow-attributes.md  data-ms-* attributes
+skills/
+├── memberstack/                    Manage the app through the MCP server
+│   ├── SKILL.md
+│   └── references/
+│       ├── tools.md                Every MCP tool (generated)
+│       └── workflows.md            Step-by-step MCP jobs
+├── memberstack-add-to-app/         Signup and login in a JavaScript app
+│   ├── SKILL.md
+│   └── references/dom-package.md   The @memberstack/dom methods
+├── memberstack-paid-memberships/   Plans, prices, checkout
+├── memberstack-gate-content/       Members-only and plan-only content
+├── memberstack-verify-on-server/   Server-side checks with @memberstack/admin
+└── memberstack-webflow/            data-ms-* attributes
+    ├── SKILL.md
+    └── references/webflow-attributes.md
 ```
 
 ## Before you open a pull request
@@ -63,7 +71,10 @@ skills/memberstack/
 - Name tools plainly, in backticks: `getMembers`. Never with an `mcp__` prefix, because the prefix differs between agents.
 - Check every claim against the server's own tool description or the [developer docs](https://developers.memberstack.com/llms.txt). Do not write arguments from memory.
 - Never show a member's password or a secret key in an example.
-- Keep it short. Link to the docs instead of copying them.
+- Keep it short. Link to the docs instead of copying them. Each `SKILL.md` stays under 500 lines.
+- One skill per job a developer asks for. The description says when to use it, in the words a user would type ("paid memberships", "gated content", "member area").
+- A skill is installed on its own by some agents, so it must not link to a file in another skill. Name the other skill instead.
+- Every skill ends with a security checklist.
 - The plugin name `memberstack` is permanent. Do not rename it.
 
 ## Reporting a problem
