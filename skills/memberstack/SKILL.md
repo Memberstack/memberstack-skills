@@ -1,8 +1,8 @@
 ---
 name: memberstack
-description: Manages a Memberstack app through the Memberstack MCP server: members, plans, prices, gated content, data tables, teams and custom fields. Use when the user asks to look up, create, change or remove something in their Memberstack account, to connect or sign in to the Memberstack MCP server, or for any Memberstack task that no narrower Memberstack skill covers.
+description: "Manages a Memberstack app through the Memberstack MCP server: members, plans, prices, gated content, data tables, teams and custom fields. Use when the user asks to look up, create, change or remove something in their Memberstack account, to connect or sign in to the Memberstack MCP server, or for any Memberstack task that no narrower Memberstack skill covers."
 license: MIT
-compatibility: Needs the Memberstack MCP server at https://mcp.memberstack.com/mcp. Plugin installs add it. Skills-only installs must add it by hand (see "Connect the server").
+compatibility: "Needs the Memberstack MCP server at https://mcp.memberstack.com/mcp. Plugin installs add it. Skills-only installs must add it by hand (see \"Connect the server\")."
 ---
 
 # Memberstack

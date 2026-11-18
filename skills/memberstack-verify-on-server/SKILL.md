@@ -1,6 +1,6 @@
 ---
 name: memberstack-verify-on-server
-description: Verifies a Memberstack member on the server with the @memberstack/admin package, so an API route or server page only answers real, logged-in members on the right plan. Use when the user needs protected API routes, server-side auth checks, private data for members only, or to verify a Memberstack token or webhook in Node.js, Next.js, Express or an edge function.
+description: "Verifies a Memberstack member on the server with the @memberstack/admin package, so an API route or server page only answers real, logged-in members on the right plan. Use when the user needs protected API routes, server-side auth checks, private data for members only, or to verify a Memberstack token or webhook in Node.js, Next.js, Express or an edge function."
 license: MIT
 ---
 

@@ -158,6 +158,33 @@ function render(tools) {
   return `${lines.join('\n').trimEnd()}\n`;
 }
 
+// Claude Code reads a loose frontmatter, but the skills CLI (npx skills add) uses a strict YAML
+// parser and silently skips a skill it cannot parse. A plain value with ": " in it is the usual
+// cause, so every value must be quoted or free of ": " and " #".
+function frontmatterProblems(text) {
+  const match = text.match(/^---\n([\s\S]*?)\n---\n/);
+  if (!match) return ['missing'];
+  const problems = [];
+  const keys = new Set();
+  for (const line of match[1].split('\n')) {
+    const pair = line.match(/^([A-Za-z-]+):\s*(.*)$/);
+    if (!pair) {
+      problems.push(`cannot read the line "${line.slice(0, 40)}"`);
+      continue;
+    }
+    const [, key, value] = pair;
+    keys.add(key);
+    const quoted = /^".*"$/.test(value) && !/(^|[^\\])"/.test(value.slice(1, -1));
+    if (!quoted && (value.includes(': ') || value.includes(' #') || /^["'\[{>|*&!%@`]/.test(value))) {
+      problems.push(`put the ${key} value in double quotes`);
+    }
+    if (key === 'description' && value.length > 1024) problems.push('description is over 1024 characters');
+    if (key === 'name' && !/^[a-z0-9-]{1,64}$/.test(value)) problems.push('name must be lowercase letters, digits and hyphens, 64 at most');
+  }
+  for (const required of ['name', 'description']) if (!keys.has(required)) problems.push(`${required} is missing`);
+  return problems;
+}
+
 function checkSkillFiles(toolNames) {
   const problems = [];
   for (const file of allSkillFiles()) {
@@ -167,6 +194,7 @@ function checkSkillFiles(toolNames) {
       if (text.includes(removed)) problems.push(`${short} mentions the removed tool ${removed}`);
     }
     if (text.includes('mcp__')) problems.push(`${short} uses an mcp__ prefix; name tools without it`);
+    if (file.endsWith('SKILL.md')) problems.push(...frontmatterProblems(text).map((problem) => `${short} frontmatter: ${problem}`));
     if (!namesMcpTools(file)) continue;
     for (const match of text.matchAll(/`([A-Za-z_]+)(?:\([^`]*\))?`/g)) {
       const word = match[1];

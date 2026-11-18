@@ -1,6 +1,6 @@
 ---
 name: memberstack-webflow
-description: Adds Memberstack logins, signup forms, paid plan buttons and gated content to a Webflow or plain HTML site with data-ms attributes, no build step. Use when the user is on Webflow, replacing Webflow User Accounts, or wants memberships, a login form, a paywall or members-only content on a site built with a script tag instead of an npm package.
+description: "Adds Memberstack logins, signup forms, paid plan buttons and gated content to a Webflow or plain HTML site with data-ms attributes, no build step. Use when the user is on Webflow, replacing Webflow User Accounts, or wants memberships, a login form, a paywall or members-only content on a site built with a script tag instead of an npm package."
 license: MIT
 ---
 

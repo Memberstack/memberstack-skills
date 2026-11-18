@@ -1,6 +1,6 @@
 ---
 name: memberstack-gate-content
-description: Gates pages and content with Memberstack so only logged-in members, or members on a given plan, can see them. Use when the user wants gated content, members-only pages, a member area, premium content, protected routes or content locked behind a plan.
+description: "Gates pages and content with Memberstack so only logged-in members, or members on a given plan, can see them. Use when the user wants gated content, members-only pages, a member area, premium content, protected routes or content locked behind a plan."
 license: MIT
 ---
 

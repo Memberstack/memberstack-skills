@@ -1,6 +1,6 @@
 ---
 name: memberstack-paid-memberships
-description: Sets up paid memberships with Memberstack and Stripe: plans, prices, checkout, upgrades and the billing portal. Use when the user wants paid memberships, subscriptions, a paywall, a pricing page that charges, premium or pro tiers, or to charge for access to a site or app.
+description: "Sets up paid memberships with Memberstack and Stripe: plans, prices, checkout, upgrades and the billing portal. Use when the user wants paid memberships, subscriptions, a paywall, a pricing page that charges, premium or pro tiers, or to charge for access to a site or app."
 license: MIT
 ---
 

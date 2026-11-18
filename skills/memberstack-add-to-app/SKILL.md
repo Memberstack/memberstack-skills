@@ -1,6 +1,6 @@
 ---
 name: memberstack-add-to-app
-description: Adds member signup, login, logout and a member area to a JavaScript app with Memberstack's @memberstack/dom package. Use when the user wants user accounts, member login or signup, a members area, or "add Memberstack" in a React, Next.js, Vue, Svelte, Astro or other JavaScript app, instead of building auth by hand.
+description: "Adds member signup, login, logout and a member area to a JavaScript app with Memberstack's @memberstack/dom package. Use when the user wants user accounts, member login or signup, a members area, or \"add Memberstack\" in a React, Next.js, Vue, Svelte, Astro or other JavaScript app, instead of building auth by hand."
 license: MIT
 ---
 
