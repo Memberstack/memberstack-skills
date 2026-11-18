@@ -5,18 +5,17 @@
     "email": "support@memberstack.com"
   },
   "metadata": {
-    "description": "Memberstack skills for Claude Code - membership management via MCP",
-    "version": "1.0.0"
+    "description": "Official Memberstack plugin: the Memberstack MCP server plus the Memberstack skill",
+    "version": "2.0.0"
   },
   "plugins": [
     {
-      "name": "memberstack-skills",
-      "description": "Memberstack membership management via MCP. Includes tools for members, plans, data tables, gated content, teams, and Webflow integration.",
+      "name": "memberstack",
       "source": "./",
-      "strict": false,
-      "skills": [
-        "./memberstack"
-      ]
+      "description": "Memberstack MCP server and skill for paid memberships, logins, plans, gated content and data tables."
     }
-  ]
+  ],
+  "renames": {
+    "memberstack-skills": "memberstack"
+  }
 }

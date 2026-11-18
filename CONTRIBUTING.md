@@ -1,87 +1,87 @@
-# Contributing to Memberstack Skills
+# Contributing
 
-Thank you for your interest in contributing to the Memberstack Skills for Claude Code!
+Thanks for helping keep the Memberstack plugin accurate.
 
-## How to Contribute
+## The one rule
 
-### Reporting Issues
+**The skill must match the server.** An agent that is told to call a tool that does not exist stops trusting the rest. So:
 
-- Check existing issues to avoid duplicates
-- Use a clear, descriptive title
-- Include steps to reproduce the issue
-- Mention your Claude Code version and OS
+- Tool names are listed in one file only: `skills/memberstack/references/tools.md`. It is generated. Do not edit it by hand.
+- A change to the server's tools ships with the matching change here.
 
-### Suggesting Improvements
-
-- Open an issue describing the enhancement
-- Explain the use case and benefit
-- Include examples if possible
-
-### Submitting Changes
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Test your changes with the Memberstack MCP
-5. Commit with clear messages (`git commit -m "Add: description of change"`)
-6. Push to your fork (`git push origin feature/your-feature`)
-7. Open a Pull Request
-
-## Skill Structure
+## Layout
 
 ```
-memberstack/
-├── SKILL.md                    # Main skill file with frontmatter
-└── references/
-    ├── mcp-tools.md            # MCP tool documentation
-    ├── webflow-attributes.md   # Webflow data-ms-* attributes
-    └── workflows.md            # Common workflow patterns
+.claude-plugin/        Claude Code plugin and marketplace files
+.codex-plugin/         Codex plugin file
+.cursor-plugin/        Cursor plugin file
+.agents/plugins/       Codex marketplace file
+.mcp.json              The MCP server, for Claude Code
+mcp.json, plugin.json  The same, in the Agent Plugins format
+scripts/sync-tools.mjs Rebuilds and checks the tool list
+evals/                 Build tasks that measure the skills (claude plugin eval)
+skills/
+├── memberstack/                    Manage the app through the MCP server
+│   ├── SKILL.md
+│   └── references/
+│       ├── tools.md                Every MCP tool (generated)
+│       └── workflows.md            Step-by-step MCP jobs
+├── memberstack-add-to-app/         Signup and login in a JavaScript app
+│   ├── SKILL.md
+│   └── references/dom-package.md   The @memberstack/dom methods
+├── memberstack-paid-memberships/   Plans, prices, checkout
+├── memberstack-gate-content/       Members-only and plan-only content
+├── memberstack-verify-on-server/   Server-side checks with @memberstack/admin
+└── memberstack-webflow/            data-ms-* attributes
+    ├── SKILL.md
+    └── references/webflow-attributes.md
 ```
 
-## Guidelines
+## Before you open a pull request
 
-### SKILL.md
+1. Rebuild the tool list from the live server (needs Node 18 or later, no sign-in):
 
-- Keep the main file concise (<500 lines)
-- Focus on procedural knowledge Claude doesn't inherently have
-- Use tables for quick reference
-- Point to reference files for detailed information
+   ```bash
+   node scripts/sync-tools.mjs
+   ```
 
-### Reference Files
+   If the server has a tool the script does not know, it stops and tells you. Add the tool to a group in `GROUPS` at the top of the script, and check whether `SKILL.md` or `workflows.md` should mention it.
 
-- Organize by topic (tools, attributes, workflows)
-- Include examples where helpful
-- Keep documentation accurate to actual MCP schemas
-- Verify against `memberstackKnowledgeSearch` when possible
+2. Run the check. CI runs the same one:
 
-### Testing Changes
+   ```bash
+   node scripts/sync-tools.mjs --check
+   ```
 
-Before submitting:
+3. Validate the plugin files:
 
-1. Install the Memberstack MCP
-2. Load your modified skill
-3. Test relevant MCP operations
-4. Verify documentation matches actual tool schemas
+   ```bash
+   claude plugin validate .
+   ```
 
-```bash
-# Test with the MCP
-claude mcp add memberstack --scope user npx mcp-remote https://mcp.memberstack.com/mcp
-```
+   A warning about a missing `version` is expected. Without one, installs follow the latest commit.
 
-### Commit Messages
+4. Try it. Install from your clone and ask the agent to do the thing you changed:
 
-Use clear prefixes:
-- `Add:` for new features
-- `Fix:` for bug fixes
-- `Update:` for documentation updates
-- `Remove:` for deletions
+   ```bash
+   claude plugin install memberstack --marketplace .
+   ```
 
-## Code of Conduct
+## Measure a skill change
 
-- Be respectful and inclusive
-- Focus on constructive feedback
-- Help others learn and grow
+`evals/` holds build tasks that run with the plugin and without it, so a change to a skill is measured, not guessed. See [evals/README.md](evals/README.md). Run the suite before and after a change to a `SKILL.md` and compare the scores. It uses your own Claude Code login and costs a few dollars a run, so it is not part of CI.
 
-## Questions?
+## Writing rules
 
-Open an issue or reach out to the Memberstack team.
+- Name tools plainly, in backticks: `getMembers`. Never with an `mcp__` prefix, because the prefix differs between agents.
+- Check every claim against the server's own tool description or the [developer docs](https://developers.memberstack.com/llms.txt). Do not write arguments from memory.
+- Never show a member's password or a secret key in an example.
+- Keep it short. Link to the docs instead of copying them. Each `SKILL.md` stays under 500 lines.
+- One skill per job a developer asks for. The description says when to use it, in the words a user would type ("paid memberships", "gated content", "member area").
+- A skill is installed on its own by some agents, so it must not link to a file in another skill. Name the other skill instead.
+- Every skill ends with a security checklist.
+- The plugin name `memberstack` is permanent. Do not rename it.
+
+## Reporting a problem
+
+Open an issue with what you asked the agent, what it did, and which agent and version you use.

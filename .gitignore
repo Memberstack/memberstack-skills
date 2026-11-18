@@ -13,3 +13,6 @@ Thumbs.db
 
 # Node modules (if any scripts added)
 node_modules/
+
+# Eval run output
+evals/results/
