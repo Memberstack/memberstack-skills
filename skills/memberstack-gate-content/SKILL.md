@@ -33,7 +33,7 @@ const hasPlan = member?.planConnections?.some(
 );
 ```
 
-Webflow and plain HTML: `data-ms-content="members"` shows an element to logged-in members only, and `data-ms-content="your-content-id"` to members with access to that content. See the `memberstack-webflow` skill.
+Webflow and plain HTML: `data-ms-content="members"` shows an element to logged-in members only, and `data-ms-content="your-content-id"` to members with access to that Gated Content group. The value is the group's key, never a plan ID, and a key that matches no group hides nothing. See the `memberstack-webflow` skill.
 
 ## Gated content rules in Memberstack
 

@@ -49,6 +49,7 @@ Form fields are matched by attribute too (for example `data-ms-member="email"` o
 - Custom code in Webflow needs a paid Webflow site plan.
 - To gate whole pages, use Memberstack's gated content rules (the `memberstack-gate-content` skill): a URL is a page path only, with no domain and no `*`.
 - `data-ms-content` hides elements in the browser. The content is still in the page source. Do not put anything secret in a hidden element.
+- A `data-ms-content` value other than `members` is the key of a Gated Content group (its Content ID), never a plan name or plan ID. If the key matches no group, nothing is hidden and nothing warns you, so copy the key exactly and test it.
 
 ## Security checklist
 
