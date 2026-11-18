@@ -68,21 +68,23 @@ function parseReply(text, id) {
 async function rpc(body, sessionId) {
   const headers = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' };
   if (sessionId) headers['Mcp-Session-Id'] = sessionId;
-  // The server is briefly unavailable when it restarts, so a 5xx or a dropped connection is
-  // retried for up to about a minute before the check fails.
+  // The server is briefly unavailable when it restarts, so a 5xx, a dropped connection or a
+  // reply that stalls is retried for up to about a minute before the check fails. The body is
+  // read inside the attempt, because a connection can drop after the headers arrived.
   let res;
+  let text;
   for (let attempt = 1; ; attempt += 1) {
     try {
-      res = await fetch(SERVER_URL, { method: 'POST', headers, body: JSON.stringify(body) });
-      if (res.status < 500) break;
-      if (attempt === 5) break;
+      res = await fetch(SERVER_URL, { method: 'POST', headers, body: JSON.stringify(body), signal: AbortSignal.timeout(30000) });
+      text = await res.text();
+      if (res.status < 500 || attempt === 5) break;
     } catch (error) {
       if (attempt === 5) throw new Error(`${body.method} failed: ${error.message}`);
     }
     await new Promise((resolve) => setTimeout(resolve, attempt * 6000));
   }
   if (!res.ok) throw new Error(`${body.method} failed: HTTP ${res.status}`);
-  const json = parseReply(await res.text(), body.id);
+  const json = parseReply(text, body.id);
   if (json?.error) throw new Error(`${body.method} failed: ${json.error.message}`);
   return { json, sessionId: res.headers.get('mcp-session-id') ?? sessionId };
 }

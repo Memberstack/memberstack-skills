@@ -1,6 +1,5 @@
 ---
 type: regex
 target: { source: file, path: components/AuthForm.tsx }
-pattern: 'memberstack'
-flags: i
+pattern: '(signupMemberEmailPassword|loginMemberEmailPassword)\s*\('
 ---

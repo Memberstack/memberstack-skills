@@ -47,8 +47,10 @@ Not a JavaScript app? For Webflow or plain HTML use the `memberstack-webflow` sk
 
    ```js
    const { data: member } = await memberstack.getCurrentMember(); // null when logged out
-   member.auth.email; // not member.email
-   member.planConnections; // not member.plans
+   if (member) {
+     member.auth.email; // not member.email
+     member.planConnections; // not member.plans
+   }
    ```
 
 5. React to changes. The callback gets the member, or `null`. It is not called on subscribe, so read the starting state with `getCurrentMember()`:

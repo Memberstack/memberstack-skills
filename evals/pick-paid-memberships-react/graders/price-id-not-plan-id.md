@@ -1,5 +1,5 @@
 ---
 type: regex
 target: { source: file, path: src/UpgradeButton.jsx }
-pattern: 'priceId'
+pattern: 'purchasePlansWithCheckout\s*\(\s*\{[^}]*priceId'
 ---

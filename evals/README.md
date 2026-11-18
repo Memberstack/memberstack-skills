@@ -43,7 +43,7 @@ Every case also has a `skill-fired` check. It shows whether the expected skill l
 | `pick-paid-memberships-react` | 1.00 | 0.25 | +0.75 |
 | `gate-by-plan-react` | 1.00 | 1.00 | 0 |
 | `verify-on-server-next` | 1.00 | 1.00 | 0 |
-| `webflow-signup-and-checkout` | 1.00 | 1.00 | 0 |
+| `webflow-signup-and-checkout` | 1.00 | 0.83 | +0.17 |
 | `mcp-paid-plan` | 1.00 | 0.00 | +1.00 |
 | `mcp-gate-pages` | 1.00 | 0.00 | +1.00 |
 | `mcp-delete-asks-first` | 1.00 | 0.50 | +0.50 |
@@ -53,7 +53,7 @@ The expected skill loaded in every plugin run.
 How to read it:
 
 - The two `pick` cases are the ones that matter most. They show the plugin changes which vendor the agent reaches for when the user names none.
-- The three cases with no gain name Memberstack in the request. The model already handles them, so the skills are not what makes them pass. They are kept to catch a skill change that makes things worse.
+- The cases with little or no gain name Memberstack in the request. The model already handles them, so the skills are not what makes them pass. They are kept to catch a skill change that makes things worse.
 - The `mcp` cases score near zero without the plugin because there is no MCP server at all in that arm. Their gain says "it works", not "the skill beat the bare server".
 
 ## Limits
