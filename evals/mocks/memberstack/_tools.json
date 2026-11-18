@@ -1,0 +1,674 @@
+{
+  "tools": [
+    {
+      "name": "listApps",
+      "description": "Action: Lists all Memberstack apps the dashboard user can access.\nUse When: Discovering available apps before selecting one with switchApp.\nDetails: Apps are complete projects with isolated members, plans, data tables, gated content, and settings. Returns role permissions (OWNER/ADMIN/MEMBERS_READ/MEMBERS_WRITE) and creation dates.\nReturns: Array of App objects with access details.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "context"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "getMemberstackEnvironment",
+      "description": "Action: Returns the current environment (LIVE or SANDBOX) for member operations.\nUse When: Checking which member dataset will be used before member operations.\nDetails: Environment setting ONLY affects member-related tools (getMember, getMembers, createMemberEmailPassword, updateMember, deleteMember, etc.). All other tools automatically use LIVE mode and ignore this setting. LIVE = production members; SANDBOX = test members.\nReturns: Environment object with current mode.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "context"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "switchMemberstackEnvironment",
+      "description": "Action: Switches environment for member operations only.\nUse When: Need to work with test members (SANDBOX) instead of production members (LIVE).\nDetails: This setting ONLY affects member-related tools. All other tools (createCustomField, createDataTable, createPlan, etc.) automatically use LIVE mode and ignore this setting. Use SANDBOX when testing with fake member data; use LIVE for real production members.\nRequires: Environment value (LIVE or SANDBOX).\nReturns: Confirmation with new environment mode.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "environment": {
+            "type": "string",
+            "enum": [
+              "LIVE",
+              "SANDBOX"
+            ],
+            "description": "Use LIVE for production members and SANDBOX for test data (aka staging)."
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "required": [
+          "environment",
+          "context"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false
+      }
+    },
+    {
+      "name": "currentApp",
+      "description": "Retrieves the active app context (members, plans, data tables, gated content). Use to verify which app is selected or check environment mode before operations \u2014 SANDBOX is testing with Stripe test cards, LIVE is production with real payments. Returns null if no app is selected; call switchApp first. The App object includes configuration, environment mode, user role, and a domains array where each domain has its own LIVE/SANDBOX mode (so one app can mix modes across domains).",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "context"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "getPlans",
+      "description": "Lists the app's plans (membership tiers) with their status, prices, permissions, redirects and team settings. A plan with prices is paid. Use getPlan for one plan's full details.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ALL",
+                  "ACTIVE",
+                  "INACTIVE"
+                ]
+              },
+              "orderBy": {
+                "type": "string",
+                "enum": [
+                  "PRIORITY",
+                  "CREATED_AT"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "context"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "getMember",
+      "description": "Retrieves one member's full profile by mem_ ID: auth, custom fields, metadata, plan connections, team memberships. To find a member by email, search with getMembers first. Members are end-users (distinct from dashboard users). Environment-specific (SANDBOX or LIVE).",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "context"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "getMembers",
+      "description": "Lists members (end-users, distinct from dashboard users), newest first; pass order: \"ASC\" for oldest first. Filter with `filters` (planIds, status, noPlans, hasComments, noComments, segmentId) and `search` (a mem_ ID, or text matched against email and custom field values). Environment-specific (SANDBOX or LIVE); use switchMemberstackEnvironment to target the correct dataset. Each row has id, email, dates, verified, and planConnections with the plan's id and name; use getMember for full details.\nPaging: returns at most 15 members per call, whatever `first` asks for. While pageInfo.hasNextPage is true, call again with the same filters, search and order, and set `after` to pageInfo.endCursor. Never pass a member ID as `after`. pageInfo.totalCountOfFilter is how many members match `filters` or `search`; it is 0 when you pass neither, so use getMembersCount for the app's total.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "after": {
+            "type": "string"
+          },
+          "order": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "planIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "noPlans": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "ACTIVE",
+                    "TRIALING",
+                    "REQUIRES_PAYMENT",
+                    "REQUIRES_AUTHENTICATION",
+                    "CANCELED"
+                  ]
+                }
+              },
+              "hasComments": {
+                "type": "boolean"
+              },
+              "noComments": {
+                "type": "boolean"
+              },
+              "segmentId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "search": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "context"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "createPlan",
+      "description": "Creates a FREE plan (membership tier): no prices; paid plans and prices are set up in the dashboard. Supports team accounts and redirects. Requires a name and description. Returns the created plan.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "teamAccountsEnabled": {
+                "type": "boolean"
+              },
+              "teamAccountInviteSignupLink": {
+                "type": "string"
+              },
+              "teamAccountUpgradeLink": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ],
+            "additionalProperties": false
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "required": [
+          "input",
+          "context"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false
+      }
+    },
+    {
+      "name": "createPrice",
+      "description": "Action: Creates a paid price point for a plan and syncs with Stripe.\nUse When: Launching new billing options (monthly/annual subscriptions, one-time purchases, or team pricing).\nDetails: Defines amount, billing cadence, currency, trial config, and setup fees. Activates paid mode and creates Stripe price record.\nRequires: Paid Memberstack subscription, LIVE environment, connected Stripe account, and plan ID.\nReturns: Created Price object.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "planId": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "active": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "SUBSCRIPTION",
+                  "ONETIME"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "bif",
+                  "clp",
+                  "djf",
+                  "gnf",
+                  "jpy",
+                  "kmf",
+                  "krw",
+                  "mga",
+                  "pyg",
+                  "rwf",
+                  "ugx",
+                  "vnd",
+                  "vuv",
+                  "xaf",
+                  "xof",
+                  "xpf",
+                  "usd",
+                  "aed",
+                  "all",
+                  "amd",
+                  "ang",
+                  "aud",
+                  "awg",
+                  "azn",
+                  "bam",
+                  "bbd",
+                  "bdt",
+                  "bgn",
+                  "bmd",
+                  "bnd",
+                  "bsd",
+                  "bwp",
+                  "bzd",
+                  "cad",
+                  "cdf",
+                  "chf",
+                  "cny",
+                  "dkk",
+                  "dop",
+                  "dzd",
+                  "egp",
+                  "etb",
+                  "eur",
+                  "fjd",
+                  "gbp",
+                  "gel",
+                  "gip",
+                  "gmd",
+                  "gyd",
+                  "hkd",
+                  "hrk",
+                  "htg",
+                  "idr",
+                  "ils",
+                  "isk",
+                  "jmd",
+                  "kes",
+                  "kgs",
+                  "khr",
+                  "kyd",
+                  "kzt",
+                  "lbp",
+                  "lkr",
+                  "lrd",
+                  "lsl",
+                  "mad",
+                  "mdl",
+                  "mkd",
+                  "mmk",
+                  "mnt",
+                  "mop",
+                  "mro",
+                  "mvr",
+                  "mwk",
+                  "mxn",
+                  "myr",
+                  "mzn",
+                  "nad",
+                  "ngn",
+                  "nok",
+                  "npr",
+                  "nzd",
+                  "pgk",
+                  "php",
+                  "pkr",
+                  "pln",
+                  "qar",
+                  "ron",
+                  "rsd",
+                  "rub",
+                  "sar",
+                  "sbd",
+                  "scr",
+                  "sek",
+                  "sgd",
+                  "sll",
+                  "sos",
+                  "szl",
+                  "thb",
+                  "tjs",
+                  "top",
+                  "try",
+                  "ttd",
+                  "twd",
+                  "tzs",
+                  "uah",
+                  "uzs",
+                  "wst",
+                  "xcd",
+                  "yer",
+                  "zar",
+                  "zmw",
+                  "inr",
+                  "czk",
+                  "brl"
+                ]
+              },
+              "intervalType": {
+                "type": "string",
+                "enum": [
+                  "YEARLY",
+                  "MONTHLY",
+                  "WEEKLY",
+                  "DAILY"
+                ]
+              },
+              "intervalCount": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "setupFeeAmount": {
+                "type": "number"
+              },
+              "setupFeeName": {
+                "type": "string"
+              },
+              "setupFeeEnabled": {
+                "type": "boolean"
+              },
+              "freeTrialEnabled": {
+                "type": "boolean"
+              },
+              "freeTrialRequiresCard": {
+                "type": "boolean"
+              },
+              "freeTrialDays": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "expirationCount": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "expirationInterval": {
+                "type": "string",
+                "enum": [
+                  "MONTHS",
+                  "DAYS"
+                ]
+              },
+              "cancelAtPeriodEnd": {
+                "type": "boolean"
+              },
+              "maxTeamMembers": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "teamAccountsEnabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "planId",
+              "amount",
+              "type",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "required": [
+          "input",
+          "context"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false
+      }
+    },
+    {
+      "name": "createRestrictedUrlGroup",
+      "description": "Action: Creates a new gated content group with URLs and access rules.\nUse When: Defining new protected website areas, member-only sections, or tiered content access.\nDetails: Content groups are collections of URLs sharing access requirements. Configure URLs (page paths only, no domain), plan access rules, redirects, and hosted content blocks (HTML, LINK, or FILE for a file uploaded in the dashboard) that only members with access can load.\nRequires: Group name and configuration.\nReturns: Created content group object.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "redirect": {
+                "type": "string"
+              },
+              "planIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "urls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "filter": {
+                      "type": "string",
+                      "enum": [
+                        "STARTS",
+                        "EQUALS"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "allowAllMembers": {
+                "type": "boolean"
+              },
+              "key": {
+                "type": "string"
+              },
+              "customContent": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "HTML",
+                        "CSS",
+                        "LINK",
+                        "JS",
+                        "JSON",
+                        "TEXT",
+                        "IMAGE",
+                        "FILE"
+                      ]
+                    },
+                    "secureFileId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "content",
+                    "name",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "redirect",
+              "planIds",
+              "urls",
+              "allowAllMembers",
+              "customContent"
+            ],
+            "additionalProperties": false
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "required": [
+          "input",
+          "context"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false
+      }
+    },
+    {
+      "name": "deleteMember",
+      "description": "Action: Permanently deletes a member and all associated Memberstack data.\nUse When: Data privacy compliance (GDPR), removing test accounts, or handling deletion requests.\nWarning: This is irreversible. Removes profile, auth, subscriptions, custom fields, metadata, and all Memberstack data. Verify correct environment (SANDBOX vs LIVE) before deletion. Consider exporting data first.\nRequires: Member ID.\nReturns: Success confirmation.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "memberId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "memberId"
+            ],
+            "additionalProperties": false
+          },
+          "confirmationToken": {
+            "type": "string",
+            "description": "Confirmation token returned by a previous call to this tool. Omit it on the first call: the server will describe what would be removed and issue a token. Only supply a token that the server issued, and only after the user has agreed to the described action."
+          },
+          "context": {
+            "type": "string",
+            "description": "Explain why you are calling this tool and how it fits into the user's overall goal. This parameter is used for analytics and user intent tracking. YOU MUST provide 15-25 words (count carefully). NEVER use first person ('I', 'we', 'you') - maintain third-person perspective. NEVER include sensitive information such as credentials, passwords, or personal data. Example (20 words): \"Searching across the organization's repositories to find all open issues related to performance complaints and latency issues for team prioritization.\""
+          }
+        },
+        "required": [
+          "input",
+          "context"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true
+      }
+    }
+  ]
+}

@@ -19,6 +19,7 @@ Thanks for helping keep the Memberstack plugin accurate.
 .mcp.json              The MCP server, for Claude Code
 mcp.json, plugin.json  The same, in the Agent Plugins format
 scripts/sync-tools.mjs Rebuilds and checks the tool list
+evals/                 Build tasks that measure the skills (claude plugin eval)
 skills/
 ├── memberstack/                    Manage the app through the MCP server
 │   ├── SKILL.md
@@ -65,6 +66,10 @@ skills/
    ```bash
    claude plugin install memberstack --marketplace .
    ```
+
+## Measure a skill change
+
+`evals/` holds build tasks that run with the plugin and without it, so a change to a skill is measured, not guessed. See [evals/README.md](evals/README.md). Run the suite before and after a change to a `SKILL.md` and compare the scores. It uses your own Claude Code login and costs a few dollars a run, so it is not part of CI.
 
 ## Writing rules
 
